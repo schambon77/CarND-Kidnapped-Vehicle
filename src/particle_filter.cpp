@@ -129,6 +129,22 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			}
 		}
 		dataAssociation(predicted, obs_map);
+		vector<int> associations;
+		vector<double> sense_x;
+		vector<double> sense_y;
+		for (int j = 0; j < obs_map.size(); j++) {
+			xc = obs_map[j].x;
+			sense_x.push_back(xc);
+			yc = obs_map[j].y;
+			sense_y.push_back(yc);
+			for (int k = 0; map_landmarks.landmark_list.size(); k++) {
+				if (obs_map[j].id == map_landmarks.landmark_list[k].id_i) {
+					associations.push_back(map_landmarks.landmark_list[k].id_i);
+					break;
+				}
+			}
+		}
+		SetAssociations(particles[i], associations, sense_x, sense_y)
 
 		//Update weights based on distance between observations and landmarks
 		double w = 1;
@@ -164,11 +180,14 @@ void ParticleFilter::resample() {
 	for (int i = 0; i < num_particles; i++) {
 		Particle sampledParticle = particles[d(gen)];
 		Particle p;
-		p.id = i;
+		p.id = sampledParticle.id;
 		p.x = sampledParticle.x;
 		p.y = sampledParticle.y;
 		p.theta = sampledParticle.theta;
-		p.weight = 1;
+		p.weight = sampledParticle.weight;
+		p.associations = sampledParticle.associations;
+		p.sense_x = sampledParticle.sense_x;
+		p.sense_y = sampledParticle.sense_y;
 		newParticles.push_back(p);
 	}
 	particles = newParticles;
