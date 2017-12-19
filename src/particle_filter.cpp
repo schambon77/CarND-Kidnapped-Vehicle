@@ -168,6 +168,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			w *= c1 * exp(-((pow(xc - xl, 2)/c2) + (pow(yc - yl, 2)/c3)));
 		}
 		particles[i].weight = w;
+		cout << "weight of particle " << i << ": " << w << endl;
 		ws.push_back(w);
 	}
 	weights = ws;
