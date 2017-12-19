@@ -129,6 +129,8 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			}
 		}
 		dataAssociation(predicted, obs_map);
+		cout << "After data association" << endl;
+
 		vector<int> associations;
 		vector<double> sense_x;
 		vector<double> sense_y;
