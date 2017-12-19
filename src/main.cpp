@@ -42,6 +42,7 @@ int main()
 	  cout << "Error: Could not open map file" << endl;
 	  return -1;
   }
+  cout << "After read map" << endl;
 
   // Create particle filter
   ParticleFilter pf;
@@ -50,6 +51,7 @@ int main()
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
+  cout << "After message" << endl;
 
     if (length && length > 2 && data[0] == '4' && data[1] == '2')
     {
