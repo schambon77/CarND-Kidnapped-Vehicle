@@ -29,18 +29,11 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	normal_distribution<double> dist_y(y, std[1]);
 	normal_distribution<double> dist_theta(theta, std[2]);
 	default_random_engine gen;
-	cout << "After normal dist creation (init)" << endl;
 
 	for (int i = 0; i < num_particles; i++) {
-		Particle p = Particle();
-		p.id = i;
-		p.x = dist_x(gen);
-		p.y = dist_y(gen);
-		p.theta = dist_theta(gen);
-		p.weight = 1;
+		Particle p(.id = i, .x = dist_x(gen), .y = dist_y(gen), .theta = dist_theta(gen), .weight = 1);
 		particles[i] = p;
 		weights.push_back(1);
-		cout << "After creation of particle " << i << endl;
 	}
 	is_initialized = true;
 }
@@ -165,12 +158,7 @@ void ParticleFilter::resample() {
 	vector<Particle> newParticles;
 	for (int i = 0; i < num_particles; i++) {
 		Particle sampledParticle = particles[d(gen)];
-		Particle p;
-		p.id = i;
-		p.x = sampledParticle.x;
-		p.y = sampledParticle.y;
-		p.theta = sampledParticle.theta;
-		p.weight = 1;
+		Particle p(.id = i, .x = sampledParticle.x, .y = sampledParticle.y, .theta = sampledParticle.theta, .weight = 1);
 		newParticles.push_back(p);
 	}
 	particles = newParticles;
