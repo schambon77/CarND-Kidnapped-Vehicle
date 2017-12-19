@@ -108,10 +108,10 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 		for (int j = 0; j < observations.size(); j++) {
 			xc = observations[j].x;
 			yc = observations[j].y;
-    		LandmarkObs obs;
-    		obs.x = xp + cos(thetap)*xc - sin(thetap)*yc;
-			obs.y = yp + sin(thetap)*xc + cos(thetap)*yc;
-			obs_map.push_back(obs);
+    		LandmarkObs obs_m;
+    		obs_m.x = xp + cos(thetap)*xc - sin(thetap)*yc;
+			obs_m.y = yp + sin(thetap)*xc + cos(thetap)*yc;
+			obs_map.push_back(obs_m);
 		}
 
 		//Associate observations with predicted landmarks
@@ -121,15 +121,14 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			xl = map_landmarks.landmark_list[j].x_f;
 			yl = map_landmarks.landmark_list[j].y_f;
 			if (dist(xp, yp, xl, yl) <= sensor_range) {  //Discard landmarks assumed to be out of range for the particle
-	    		LandmarkObs obs;
-	    		obs.id = map_landmarks.landmark_list[j].id_i;
-	    		obs.x = xl - xp;
-	    		obs.y = yl - yp;
-	    		predicted.push_back(obs);
+	    		LandmarkObs pred;
+	    		pred.id = map_landmarks.landmark_list[j].id_i;
+	    		pred.x = xl;
+	    		pred.y = yl;
+	    		predicted.push_back(pred);
 			}
 		}
 		dataAssociation(predicted, obs_map);
-		cout << "After data association" << endl;
 
 		vector<int> associations;
 		vector<double> sense_x;
@@ -149,7 +148,6 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 		particles[i].associations = associations;
 		particles[i].sense_x = sense_x;
 		particles[i].sense_y = sense_y;
-		cout << "After set association" << endl;
 
 		//Update weights based on distance between observations and landmarks
 		double w = 1;
