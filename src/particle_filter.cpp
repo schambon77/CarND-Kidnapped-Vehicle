@@ -146,7 +146,10 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 				}
 			}
 		}
+		cout << "Before set association" << endl;
+
 		SetAssociations(particles[i], associations, sense_x, sense_y);
+		cout << "After set association" << endl;
 
 		//Update weights based on distance between observations and landmarks
 		double w = 1;
