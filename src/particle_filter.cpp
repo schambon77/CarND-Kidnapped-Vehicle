@@ -31,7 +31,7 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	default_random_engine gen;
 
 	for (int i = 0; i < num_particles; i++) {
-		Particle p(.id = i, .x = dist_x(gen), .y = dist_y(gen), .theta = dist_theta(gen), .weight = 1);
+		Particle p(i, dist_x(gen), dist_y(gen), dist_theta(gen), 1);
 		particles[i] = p;
 		weights.push_back(1);
 	}
@@ -158,7 +158,7 @@ void ParticleFilter::resample() {
 	vector<Particle> newParticles;
 	for (int i = 0; i < num_particles; i++) {
 		Particle sampledParticle = particles[d(gen)];
-		Particle p(.id = i, .x = sampledParticle.x, .y = sampledParticle.y, .theta = sampledParticle.theta, .weight = 1);
+		Particle p(i, sampledParticle.x, sampledParticle.y, sampledParticle.theta, 1);
 		newParticles.push_back(p);
 	}
 	particles = newParticles;
