@@ -151,7 +151,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 
 		//Update weights based on distance between observations and landmarks
 		double w = 1;
-		double c1 = 1 / (2*M_PI*std_landmark[0]*std_landmark[1]);
+		double c1 = 1.0 / (2*M_PI*std_landmark[0]*std_landmark[1]);
 		double c2 = 2*std_landmark[0]*std_landmark[0];
 		double c3 = 2*std_landmark[1]*std_landmark[1];
 		for (int j = 0; j < obs_map.size(); j++) {
@@ -182,16 +182,16 @@ void ParticleFilter::resample() {
 	vector<Particle> newParticles;
 	for (int i = 0; i < num_particles; i++) {
 		Particle sampledParticle = particles[d(gen)];
-		Particle p;
-		p.id = sampledParticle.id;
-		p.x = sampledParticle.x;
-		p.y = sampledParticle.y;
-		p.theta = sampledParticle.theta;
-		p.weight = sampledParticle.weight;
-		p.associations = sampledParticle.associations;
-		p.sense_x = sampledParticle.sense_x;
-		p.sense_y = sampledParticle.sense_y;
-		newParticles.push_back(p);
+		Particle newParticle;
+		newParticle.id = sampledParticle.id;
+		newParticle.x = sampledParticle.x;
+		newParticle.y = sampledParticle.y;
+		newParticle.theta = sampledParticle.theta;
+		newParticle.weight = sampledParticle.weight;
+		newParticle.associations = sampledParticle.associations;
+		newParticle.sense_x = sampledParticle.sense_x;
+		newParticle.sense_y = sampledParticle.sense_y;
+		newParticles.push_back(newParticle);
 	}
 	particles = newParticles;
 }
