@@ -70,11 +70,11 @@ void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::ve
 	// NOTE: this method will NOT be called by the grading code. But you will probably find it useful to 
 	//   implement this method and use it as a helper during the updateWeights phase.
 	for (int i = 0; i < observations.size(); i++) {
-		double dist_min = DBL_MAX;
+		double dist_min = numeric_limits<double>::max();
 		for (int j = 0; j < predicted.size(); j++) {
 			if (dist(observations[i].x, observations[i].y, predicted[j].x, predicted[j].y) < dist_min)
 			{
-				observations.id = predicted.id;
+				observations[i].id = predicted[j].id;
 			}
 		}
 	}
@@ -116,8 +116,8 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 		vector<LandmarkObs> predicted;
 		double xl, yl;
 		for (int j = 0; j < map_landmarks.landmark_list.size(); j++) {
-			xl = map_landmarks.landmark_list[j].x;
-			yl = map_landmarks.landmark_list[j].y;
+			xl = map_landmarks.landmark_list[j].x_f;
+			yl = map_landmarks.landmark_list[j].y_f;
 			if (dist(xp, yp, xl, yl) <= sensor_range) {  //Discard landmarks assumed to be out of range for the particle
 	    		LandmarkObs obs;
 	    		obs.id = map_landmarks.landmark_list[j].id_i;
@@ -138,9 +138,9 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 			yc = obs_map[j].y;
 			xl = 0, yl = 0;
 			for (int k = 0; map_landmarks.landmark_list.size(); k++) {
-				if (obs_map[j].id == map_landmarks.landmark_list[k].id) {
-					xl = map_landmarks.landmark_list[k].x;
-					yl = map_landmarks.landmark_list[k].y;
+				if (obs_map[j].id == map_landmarks.landmark_list[k].id_i) {
+					xl = map_landmarks.landmark_list[k].x_f;
+					yl = map_landmarks.landmark_list[k].y_f;
 					break;
 				}
 			}
