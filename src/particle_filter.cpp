@@ -40,7 +40,7 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 		p.weight = 1;
 		particles[i] = p;
 		weights.push_back(1);
-		cout << "After creation of particle " << i << << endl;
+		cout << "After creation of particle " << i << endl;
 	}
 	is_initialized = true;
 }
