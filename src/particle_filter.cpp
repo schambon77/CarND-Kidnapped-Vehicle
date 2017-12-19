@@ -69,12 +69,20 @@ void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::ve
 	//   observed measurement to this particular landmark.
 	// NOTE: this method will NOT be called by the grading code. But you will probably find it useful to 
 	//   implement this method and use it as a helper during the updateWeights phase.
-
+	for (int i = 0; i < observations.size(); i++) {
+		double dist_min = DBL_MAX;
+		for (int j = 0; j < predicted.size(); j++) {
+			if (dist(observations[i].x, observations[i].y, predicted[j].x, predicted[j].y) < dist_min)
+			{
+				observations.id = predicted.id;
+			}
+		}
+	}
 }
 
 void ParticleFilter::updateWeights(double sensor_range, double std_landmark[], 
 		const std::vector<LandmarkObs> &observations, const Map &map_landmarks) {
-	// TODO: Update the weights of each particle using a mult-variate Gaussian distribution. You can read
+	// TODO: Update the weights of each particle using a multi-variate Gaussian distribution. You can read
 	//   more about this distribution here: https://en.wikipedia.org/wiki/Multivariate_normal_distribution
 	// NOTE: The observations are given in the VEHICLE'S coordinate system. Your particles are located
 	//   according to the MAP'S coordinate system. You will need to transform between the two systems.
@@ -84,6 +92,64 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 	//   and the following is a good resource for the actual equation to implement (look at equation 
 	//   3.33
 	//   http://planning.cs.uiuc.edu/node99.html
+
+	//For each particle
+	double xp, yp, thetap, xc, yc;
+	vector<double> ws;
+	for (int i = 0; i < num_particles; i++) {
+		xp = particles[i].x;
+		yp = particles[i].y;
+		thetap = particles[i].theta;
+
+		//Transform noisy observations made in car coordinates into map coordinates
+		vector<LandmarkObs> obs_map;
+		for (int j = 0; j < observations.size(); j++) {
+			xc = observations[j].x;
+			yc = observations[j].y;
+    		LandmarkObs obs;
+    		obs.x = xp + cos(thetap)*xc - sin(thetap)*yc;
+			obs.y = yp + sin(thetap)*xc + cos(thetap)*yc;
+			obs_map.push_back(obs);
+		}
+
+		//Associate observations with predicted landmarks
+		vector<LandmarkObs> predicted;
+		double xl, yl;
+		for (int j = 0; j < map_landmarks.landmark_list.size(); j++) {
+			xl = map_landmarks.landmark_list[j].x;
+			yl = map_landmarks.landmark_list[j].y;
+			if (dist(xp, yp, xl, yl) <= sensor_range) {  //Discard landmarks assumed to be out of range for the particle
+	    		LandmarkObs obs;
+	    		obs.id = map_landmarks.landmark_list[j].id_i;
+	    		obs.x = xl - xp;
+	    		obs.y = yl - yp;
+	    		predicted.push_back(obs);
+			}
+		}
+		dataAssociation(predicted, obs_map);
+
+		//Update weights based on distance between observations and landmarks
+		double w = 1;
+		double c1 = 1 / (2*M_PI*std_landmark[0]*std_landmark[1]);
+		double c2 = 2*std_landmark[0]*std_landmark[0];
+		double c3 = 2*std_landmark[1]*std_landmark[1];
+		for (int j = 0; j < obs_map.size(); j++) {
+			xc = obs_map[j].x;
+			yc = obs_map[j].y;
+			xl = 0, yl = 0;
+			for (int k = 0; map_landmarks.landmark_list.size(); k++) {
+				if (obs_map[j].id == map_landmarks.landmark_list[k].id) {
+					xl = map_landmarks.landmark_list[k].x;
+					yl = map_landmarks.landmark_list[k].y;
+					break;
+				}
+			}
+			w *= c1 * exp(-((pow(xc - xl, 2)/c2) + (pow(yc - yl, 2)/c3)));
+		}
+		particles[i].weight = w;
+		ws.push_back(w);
+	}
+	weights = ws;
 }
 
 void ParticleFilter::resample() {
