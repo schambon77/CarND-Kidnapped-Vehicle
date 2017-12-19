@@ -123,7 +123,6 @@ int main()
 		  Particle best_particle;
 		  double weight_sum = 0.0;
 		  for (int i = 0; i < num_particles; ++i) {
-			cout << "weight of particle " << i << ": " << particles[i].weight << endl;
 			if (particles[i].weight > highest_weight) {
 				highest_weight = particles[i].weight;
 				best_particle = particles[i];

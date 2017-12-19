@@ -150,7 +150,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 		particles[i].sense_y = sense_y;
 
 		//Update weights based on distance between observations and landmarks
-		double w = 1;
+		double w = 1.0;
 		double c1 = 1.0 / (2*M_PI*std_landmark[0]*std_landmark[1]);
 		double c2 = 2*std_landmark[0]*std_landmark[0];
 		double c3 = 2*std_landmark[1]*std_landmark[1];
