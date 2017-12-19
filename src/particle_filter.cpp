@@ -151,9 +151,13 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 
 		//Update weights based on distance between observations and landmarks
 		double w = 1.0;
+		double temp_w;
 		double c1 = 1.0 / (2*M_PI*std_landmark[0]*std_landmark[1]);
 		double c2 = 2*std_landmark[0]*std_landmark[0];
 		double c3 = 2*std_landmark[1]*std_landmark[1];
+		cout << "c1 " << c1 << endl;
+		cout << "c2 " << c1 << endl;
+		cout << "c3 " << c1 << endl;
 		for (int j = 0; j < obs_map.size(); j++) {
 			xc = obs_map[j].x;
 			yc = obs_map[j].y;
@@ -165,7 +169,9 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 					break;
 				}
 			}
-			w *= c1 * exp(-((pow(xc - xl, 2)/c2) + (pow(yc - yl, 2)/c3)));
+			temp_w = c1 * exp(-((pow(xc - xl, 2)/c2) + (pow(yc - yl, 2)/c3)));
+			w *= temp_w;
+			cout << "temp_w for obs " << j << ": " << temp_w << endl;
 		}
 		particles[i].weight = w;
 		cout << "weight of particle " << i << ": " << w << endl;
