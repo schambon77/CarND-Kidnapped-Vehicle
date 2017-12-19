@@ -29,6 +29,8 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	normal_distribution<double> dist_y(y, std[1]);
 	normal_distribution<double> dist_theta(theta, std[2]);
 	default_random_engine gen;
+	cout << "After normal dist creation (init)" << endl;
+
 	for (int i = 0; i < num_particles; i++) {
 		Particle p = Particle();
 		p.id = i;
@@ -38,6 +40,7 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
 		p.weight = 1;
 		particles[i] = p;
 		weights.push_back(1);
+		cout << "After creation of particle " << i << << endl;
 	}
 	is_initialized = true;
 }
