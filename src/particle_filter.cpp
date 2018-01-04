@@ -79,6 +79,7 @@ void ParticleFilter::dataAssociation(std::vector<LandmarkObs> predicted, std::ve
 				observations[i].id = predicted[j].id;
 			}
 		}
+		cout << "Association for obs " << i << ": " << observations[i].id << endl;
 	}
 }
 
