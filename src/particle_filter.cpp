@@ -49,14 +49,20 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
 	//  http://en.cppreference.com/w/cpp/numeric/random/normal_distribution
 	//  http://www.cplusplus.com/reference/random/default_random_engine/
 	default_random_engine gen;
-	double v_over_yr = velocity / yaw_rate;
-	double yr_dt = yaw_rate*delta_t;
 	double theta;
+	double yr_dt = yaw_rate*delta_t;
+	double v_dt = velocity*delta_t;
 	for (int i = 0; i < num_particles; i++) {
 		theta = particles[i].theta;
-		particles[i].x += v_over_yr * (sin(theta + yr_dt) - sin(theta));
-		particles[i].y += v_over_yr * (cos(theta) - cos(theta + yr_dt));
-		particles[i].theta += yr_dt;
+		if (abs(yaw_rate) > 0.0001) {
+			particles[i].x += (velocity / yaw_rate) * (sin(theta + yr_dt) - sin(theta));
+			particles[i].y += (velocity / yaw_rate) * (cos(theta) - cos(theta + yr_dt));
+			particles[i].theta += yr_dt;
+		} else {
+			particles[i].x += v_dt*cos(theta);
+			particles[i].y += v_dt*sin(theta);
+			particles[i].theta += theta;
+		}
 		normal_distribution<double> dist_x(particles[i].x, std_pos[0]);
 		normal_distribution<double> dist_y(particles[i].y, std_pos[1]);
 		normal_distribution<double> dist_theta(particles[i].theta, std_pos[2]);
@@ -116,7 +122,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
     		obs_m.x = xp + cos(thetap)*xc - sin(thetap)*yc;
 			obs_m.y = yp + sin(thetap)*xc + cos(thetap)*yc;
 			obs_map.push_back(obs_m);
-			cout << "xp yp thetap " << xp << " " << yp << " " << thetap << endl;
+			//cout << "xp yp thetap " << xp << " " << yp << " " << thetap << endl;
 		}
 
 		//Associate observations with predicted landmarks
@@ -160,9 +166,9 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 		double c1 = 1.0 / (2*M_PI*std_landmark[0]*std_landmark[1]);
 		double c2 = 2*std_landmark[0]*std_landmark[0];
 		double c3 = 2*std_landmark[1]*std_landmark[1];
-		cout << "c1 " << c1 << endl;
-		cout << "c2 " << c2 << endl;
-		cout << "c3 " << c3 << endl;
+		//cout << "c1 " << c1 << endl;
+		//cout << "c2 " << c2 << endl;
+		//cout << "c3 " << c3 << endl;
 		for (int j = 0; j < obs_map.size(); j++) {
 			xc = obs_map[j].x;
 			yc = obs_map[j].y;
@@ -174,13 +180,13 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 					break;
 				}
 			}
-			cout << "xc yc xl yl " << xc << " " << yc << " " << xl << " " << yl << " " << endl;
+			//cout << "xc yc xl yl " << xc << " " << yc << " " << xl << " " << yl << " " << endl;
 			temp_w = c1 * exp(-((pow(xc - xl, 2)/c2) + (pow(yc - yl, 2)/c3)));
 			w *= temp_w;
-			cout << "temp_w for obs " << j << ": " << temp_w << endl;
+			//cout << "temp_w for obs " << j << ": " << temp_w << endl;
 		}
 		particles[i].weight = w;
-		cout << "weight of particle " << i << ": " << w << endl;
+		//cout << "weight of particle " << i << ": " << w << endl;
 		ws.push_back(w);
 	}
 	weights = ws;
