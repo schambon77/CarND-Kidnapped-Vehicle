@@ -173,6 +173,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
 					break;
 				}
 			}
+			cout << "xc yc xl yl " << xc << " " << yc << " " << xl << " " << yl << " " << endl;
 			temp_w = c1 * exp(-((pow(xc - xl, 2)/c2) + (pow(yc - yl, 2)/c3)));
 			w *= temp_w;
 			cout << "temp_w for obs " << j << ": " << temp_w << endl;
