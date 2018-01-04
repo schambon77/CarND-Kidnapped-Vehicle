@@ -116,6 +116,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
     		obs_m.x = xp + cos(thetap)*xc - sin(thetap)*yc;
 			obs_m.y = yp + sin(thetap)*xc + cos(thetap)*yc;
 			obs_map.push_back(obs_m);
+			cout << "xp yp thetap " << xp << " " << yp << " " << thetap << endl;
 		}
 
 		//Associate observations with predicted landmarks
