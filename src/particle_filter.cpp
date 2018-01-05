@@ -61,7 +61,7 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
 		} else {
 			particles[i].x += v_dt*cos(theta);
 			particles[i].y += v_dt*sin(theta);
-			particles[i].theta += theta;
+			particles[i].theta = theta;
 		}
 		normal_distribution<double> dist_x(particles[i].x, std_pos[0]);
 		normal_distribution<double> dist_y(particles[i].y, std_pos[1]);
